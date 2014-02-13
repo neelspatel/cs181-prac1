@@ -9,10 +9,10 @@ import operator
 # defaults to the global mean.
 
 def dist(a,b):
-    return np.linalg.norm(a-b)
-    #return np.dot(a,b) / (np.linalg.norm(a) * np.linalg.norm(b))
+    #return np.linalg.norm(a-b)
+    return np.dot(a,b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
-def nearest_pred(cur_user, users, prefs, index_to_get, k):
+def nearest_pred(cur_user, users, prefs, index_to_get, k, global_users, user_id):
     rated = []
 
     #create the list of pref vectors
@@ -24,9 +24,17 @@ def nearest_pred(cur_user, users, prefs, index_to_get, k):
     min_distance = float("inf")
     results = []
     for i in range(len(rated)):
+        compare_user = users[i]
+        compare_avg = float(global_users[compare_user]['total']) / global_users[compare_user]['count']
+        this_avg = float(global_users[user_id]['total']) / global_users[user_id]['count']
+
         cur_rating = rated[i]
-        cur_dist = dist(cur_user, cur_rating)
-        if cur_dist < min_distance:
+        cur_dist = dist(cur_user - this_avg, cur_rating - compare_avg)
+        #pickle.dump( min_distance, open( "min_dist.p", "wb" ) )
+        #pickle.dump( cur_dist, open( "cur_dist.p", "wb" ) )
+        #pickle.dump( cur_rating, open( "cur_rating.p", "wb" ) )
+        #print cur_dist
+        if np.less(cur_dist, min_distance):
             min_distance = cur_dist
             min_index = i
         results.append({"distance": cur_dist, "rating": cur_rating})
@@ -145,7 +153,7 @@ for query in test_queries:
             rated_users = books_users[cur_book]
 
             #print "About to make prediction"
-            prediction = nearest_pred(cur_user, rated_users, prefs, cur_book_index, 15)
+            prediction = nearest_pred(cur_pref, rated_users, prefs, cur_book_index, 15, users, cur_user)
             
             if users[cur_user]['count'] == 0:
                 # Perhaps we did not having any ratings in the training set.
