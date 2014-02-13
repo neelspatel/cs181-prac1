@@ -10,6 +10,7 @@ import operator
 
 def dist(a,b):
     return np.linalg.norm(a-b)
+    #return np.dot(a,b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
 def nearest_pred(cur_user, users, prefs, index_to_get, k):
     rated = []
@@ -50,10 +51,10 @@ def nearest_pred(cur_user, users, prefs, index_to_get, k):
     return result
     
 pred_filename  = 'pred-cf-user-mean.csv'
-#train_filename = 'half-ratings-train.csv'
-#test_filename  = 'half-ratings-test.csv'
-train_filename = 'ratings-train.csv'
-test_filename  = 'ratings-test.csv'
+train_filename = 'half-ratings-train.csv'
+test_filename  = 'half-ratings-test.csv'
+#train_filename = 'ratings-train.csv'
+#test_filename  = 'ratings-test.csv'
 user_filename  = 'users.csv'
 book_filename  = 'books.csv'
 
@@ -179,7 +180,6 @@ print "Book Excepted " + str(book_except_count)
 print "User Excepted " + str(user_except_count)
 
 # Write the prediction file.
-util.write_predictions(test_queries, pred_filename)
+#util.write_predictions(test_queries, pred_filename)
 
-
-#print util.rmse(test_queries[:1000])
+print util.rmse(test_queries)
